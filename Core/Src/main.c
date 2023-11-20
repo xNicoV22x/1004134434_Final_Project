@@ -128,12 +128,9 @@ int main(void)
   printf("Started\r\n");
   while (1)
   {
-	  if (keypad_event != KEYPAD_EVENT_NONE){
-		  uint8_t key_pressed = keypad_handler(keypad_event);
-		  if (key_pressed != KEY_PRESSED_NONE) {
-			  lock_sequence_handler(key_pressed);
-		  }
-		  keypad_event = KEYPAD_EVENT_NONE;
+	  uint8_t key_pressed = keypad_run(&keypad_event);
+	  if (key_pressed != KEY_PRESSED_NONE) {
+		  lock_sequence_handler(key_pressed);
 	  }
     /* USER CODE END WHILE */
 
