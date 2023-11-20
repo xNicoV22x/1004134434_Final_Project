@@ -26,6 +26,9 @@
 
 #include "keypad.h"
 #include "ring_buffer.h"
+
+#include "ssd1306.h"
+#include "ssd1306_fonts.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -80,6 +83,15 @@ int _write(int file, char *ptr, int len)
 	  LL_USART_TransmitData8(USART2, ptr[idx]);
   }
   return len;
+}
+
+void GUI_init(void)
+{
+	ssd1306_Init();
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(20, 5);
+	ssd1306_WriteString("Locked", Font_16x26, White);
+	ssd1306_UpdateScreen();
 }
 
 void keypad_it_callback(uint16_t pin)
@@ -148,6 +160,7 @@ int main(void)
   ring_buffer_init(&keypad_rb, keypad_buffer, 12);
   keypad_init();
 
+  GUI_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
