@@ -57,6 +57,8 @@ uint8_t password[MAX_PASSWORD] = "1992";
 
 uint8_t keypad_buffer[MAX_PASSWORD];
 ring_buffer_t keypad_rb;
+
+extern const uint8_t locked[];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -91,6 +93,7 @@ void GUI_init(void)
 	ssd1306_Fill(Black);
 	ssd1306_SetCursor(20, 5);
 	ssd1306_WriteString("Locked", Font_16x26, White);
+	ssd1306_DrawBitmap(50, 35, locked, 30, 30, White);
 	ssd1306_UpdateScreen();
 }
 
