@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,7 +61,18 @@ static void MX_RTC_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int _write(int file, char *ptr, int len)
+{
+  // send each byte in blocking mode
+  for (uint8_t idx = 0; idx < len; idx++) {
+	  while (LL_USART_IsActiveFlag_TXE(USART2) == 0) {
+		  // wait until Tx Empty flag becomes true
+		  // TODO: add timeout
+	  }
+	  LL_USART_TransmitData8(USART2, ptr[idx]);
+  }
+  return len;
+}
 /* USER CODE END 0 */
 
 /**
@@ -102,6 +113,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  printf("Started\r\n");
   while (1)
   {
     /* USER CODE END WHILE */
