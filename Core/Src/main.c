@@ -22,13 +22,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-#include <string.h>
 
+#include "lock.h"
 #include "keypad.h"
-#include "ring_buffer.h"
-
-#include "ssd1306.h"
-#include "ssd1306_fonts.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -38,7 +34,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define MAX_PASSWORD 12
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -53,12 +49,7 @@ RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN PV */
 volatile uint16_t keypad_event = KEYPAD_EVENT_NONE;
-uint8_t password[MAX_PASSWORD] = "1992";
 
-uint8_t keypad_buffer[MAX_PASSWORD];
-ring_buffer_t keypad_rb;
-
-extern const uint8_t locked[];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,43 +78,11 @@ int _write(int file, char *ptr, int len)
   return len;
 }
 
-void GUI_init(void)
-{
-	ssd1306_Init();
-	ssd1306_Fill(Black);
-	ssd1306_SetCursor(20, 5);
-	ssd1306_WriteString("Locked", Font_16x26, White);
-	ssd1306_DrawBitmap(50, 35, locked, 30, 30, White);
-	ssd1306_UpdateScreen();
-}
+
 
 void keypad_it_callback(uint16_t pin)
 {
 	keypad_event = pin;
-}
-
-void update_password(void)
-{
-	uint8_t sequence[12];
-	uint8_t seq_len = ring_buffer_size(&keypad_rb);
-	for (uint8_t idx = 0; idx < seq_len; idx++) {
-		ring_buffer_get(&keypad_rb, &sequence[idx]);
-	}
-
-	if (memcmp(sequence, password, 4) == 0) {
-		printf("Enter new Password:\r\n");
-	} else {
-		printf("Password Failed\r\n");
-	}
-}
-
-void sequence_handler(uint8_t key)
-{
-	ring_buffer_put(&keypad_rb, key);
-
-	if (key == '*') {
-		update_password();
-	}
 }
 /* USER CODE END 0 */
 
@@ -160,10 +119,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  ring_buffer_init(&keypad_rb, keypad_buffer, 12);
+  lock_init();
   keypad_init();
-
-  GUI_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -174,7 +131,7 @@ int main(void)
 	  if (keypad_event != KEYPAD_EVENT_NONE){
 		  uint8_t key_pressed = keypad_handler(keypad_event);
 		  if (key_pressed != KEY_PRESSED_NONE) {
-			  sequence_handler(key_pressed);
+			  lock_sequence_handler(key_pressed);
 		  }
 		  keypad_event = KEYPAD_EVENT_NONE;
 	  }
