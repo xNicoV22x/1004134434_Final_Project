@@ -22,8 +22,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
 
 #include "keypad.h"
+#include "ring_buffer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -33,7 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define MAX_PASSWORD 12
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -48,7 +50,10 @@ RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN PV */
 volatile uint16_t keypad_event = KEYPAD_EVENT_NONE;
+uint8_t password[MAX_PASSWORD] = "1992";
 
+uint8_t keypad_buffer[MAX_PASSWORD];
+ring_buffer_t keypad_rb;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -82,10 +87,28 @@ void keypad_it_callback(uint16_t pin)
 	keypad_event = pin;
 }
 
+void update_password(void)
+{
+	uint8_t sequence[12];
+	uint8_t seq_len = ring_buffer_size(&keypad_rb);
+	for (uint8_t idx = 0; idx < seq_len; idx++) {
+		ring_buffer_get(&keypad_rb, &sequence[idx]);
+	}
+
+	if (memcmp(sequence, password, 4) == 0) {
+		printf("Enter new Password:\r\n");
+	} else {
+		printf("Password Failed\r\n");
+	}
+}
+
 void sequence_handler(uint8_t key)
 {
-	printf("Pressed: %c\r\n", key);
+	ring_buffer_put(&keypad_rb, key);
 
+	if (key == '*') {
+		update_password();
+	}
 }
 /* USER CODE END 0 */
 
@@ -122,6 +145,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
+  ring_buffer_init(&keypad_rb, keypad_buffer, 12);
   keypad_init();
 
   /* USER CODE END 2 */
