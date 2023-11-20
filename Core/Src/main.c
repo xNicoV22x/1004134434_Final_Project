@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+
+#include "keypad.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +47,7 @@ I2C_HandleTypeDef hi2c1;
 RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN PV */
+volatile uint16_t keypad_event = KEYPAD_EVENT_NONE;
 
 /* USER CODE END PV */
 
@@ -72,6 +75,17 @@ int _write(int file, char *ptr, int len)
 	  LL_USART_TransmitData8(USART2, ptr[idx]);
   }
   return len;
+}
+
+void keypad_it_callback(uint16_t pin)
+{
+	keypad_event = pin;
+}
+
+void sequence_handler(uint8_t key)
+{
+	printf("Pressed: %c\r\n", key);
+
 }
 /* USER CODE END 0 */
 
@@ -108,6 +122,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
+  keypad_init();
 
   /* USER CODE END 2 */
 
@@ -116,6 +131,13 @@ int main(void)
   printf("Started\r\n");
   while (1)
   {
+	  if (keypad_event != KEYPAD_EVENT_NONE){
+		  uint8_t key_pressed = keypad_handler(keypad_event);
+		  if (key_pressed != KEY_PRESSED_NONE) {
+			  sequence_handler(key_pressed);
+		  }
+		  keypad_event = KEYPAD_EVENT_NONE;
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -516,16 +538,16 @@ static void MX_GPIO_Init(void)
   LL_GPIO_SetPinPull(B1_GPIO_Port, B1_Pin, LL_GPIO_PULL_NO);
 
   /**/
-  LL_GPIO_SetPinPull(COL_1_GPIO_Port, COL_1_Pin, LL_GPIO_PULL_NO);
+  LL_GPIO_SetPinPull(COL_1_GPIO_Port, COL_1_Pin, LL_GPIO_PULL_DOWN);
 
   /**/
-  LL_GPIO_SetPinPull(COL_4_GPIO_Port, COL_4_Pin, LL_GPIO_PULL_NO);
+  LL_GPIO_SetPinPull(COL_4_GPIO_Port, COL_4_Pin, LL_GPIO_PULL_DOWN);
 
   /**/
-  LL_GPIO_SetPinPull(COL_2_GPIO_Port, COL_2_Pin, LL_GPIO_PULL_NO);
+  LL_GPIO_SetPinPull(COL_2_GPIO_Port, COL_2_Pin, LL_GPIO_PULL_DOWN);
 
   /**/
-  LL_GPIO_SetPinPull(COL_3_GPIO_Port, COL_3_Pin, LL_GPIO_PULL_NO);
+  LL_GPIO_SetPinPull(COL_3_GPIO_Port, COL_3_Pin, LL_GPIO_PULL_DOWN);
 
   /**/
   LL_GPIO_SetPinMode(B1_GPIO_Port, B1_Pin, LL_GPIO_MODE_INPUT);
