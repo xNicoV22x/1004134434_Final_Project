@@ -86,26 +86,3 @@ void lock_command_handler(uint8_t *key)
 	}
 }
 
-
-//	for (uint8_t idx = 0; idx < 7; idx++) {
-//		ring_buffer_get(&rx_rb, &received_id[idx]);
-//	}
-//	if (memcmp(expected_id, received_id, 7) == 0) {
-//		/* 3.1 -> Show "Success" if the string is correct */
-//		print_string("Success");
-//		failed_counter = 0; // reset the failure counter if success
-//		HAL_Delay(3*1000);
-//	} else {
-//		failed_counter++;
-//		if (failed_counter < 3) {
-//			/* 3.2 -> Show "Failed" if the string is incorrect */
-//			print_string("Failed ");
-//			HAL_Delay(3*1000);
-//		} else {
-//			/* 4 -> Show "Blocked" if the string is incorrect 3 times */
-//			print_string("Blocked");
-//			failed_counter = 0;
-//			HAL_Delay(10*1000);
-//		}
-//	}
-//}
