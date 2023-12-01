@@ -27,4 +27,5 @@ Los elementos clave para este proyecto son:
 
 
 ## Contact info
-* Sam C - saacifuentesmu@unal.edu.co
+* Nicolas Bacca - nbaccar@unal.edu.co
+* Maria Jose Erazo - merazoi@unal.edu.co
