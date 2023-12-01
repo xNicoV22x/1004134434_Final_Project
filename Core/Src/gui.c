@@ -10,7 +10,16 @@ extern const uint8_t locked[];
 void GUI_init(void)
 {
 	ssd1306_Init();
-	GUI_locked();
+	GUI_Wait();
+}
+
+void GUI_Wait()
+{
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(20, 5);
+	ssd1306_WriteString("Wait...", Font_16x26, White);
+	ssd1306_DrawBitmap(50, 35, locked, 30, 30, White);
+	ssd1306_UpdateScreen();
 }
 
 void GUI_locked(void)
@@ -49,6 +58,38 @@ void GUI_update_password_success(void)
 {
 	ssd1306_SetCursor(5, 35);
 	ssd1306_WriteString("Success!", Font_16x26, White);
+	ssd1306_UpdateScreen();
+}
+
+void GUI_blocked_access_system(void)
+{
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(5, 35);
+	ssd1306_WriteString("Blocked!", Font_16x26, White);
+	ssd1306_UpdateScreen();
+}
+
+void GUI_open_access_system(void)
+{
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(5, 35);
+	ssd1306_WriteString("Open!", Font_16x26, White);
+	ssd1306_UpdateScreen();
+}
+
+void GUI_error_access_system(void)
+{
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(10, 35);
+	ssd1306_WriteString("Error!", Font_16x26, White);
+	ssd1306_UpdateScreen();
+}
+
+void GUI_empty(void)
+{
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(10, 35);
+	ssd1306_WriteString("      ", Font_16x26, White);
 	ssd1306_UpdateScreen();
 }
 

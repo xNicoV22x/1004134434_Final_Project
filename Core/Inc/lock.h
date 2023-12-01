@@ -1,9 +1,3 @@
-/*
- * lock.h
- *
- *  Created on: Nov 20, 2023
- *      Author: saaci
- */
 
 #ifndef INC_LOCK_H_
 #define INC_LOCK_H_
