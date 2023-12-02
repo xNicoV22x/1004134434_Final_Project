@@ -72,17 +72,21 @@ void command_manager_init(void)
 	GUI_init();
 }
 
-void lock_command_handler(uint8_t *key)
+uint8_t lock_command_handler(uint8_t *key)
 {
 	if (memcmp(block, key, 5) == 0){
 		blocked_system();
+		return 0;
 	}
 	else if (memcmp(open, key, 5) == 0){
 		open_system();
 		GUI_locked();
+		HAL_Delay(3*1000);
+		return 1;
 	}
 	 else {
 		 error_command();
+		 return 2;
 	}
 }
 

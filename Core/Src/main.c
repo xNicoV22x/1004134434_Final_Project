@@ -177,15 +177,21 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   printf("\r\nStarted\r\nMenu: If you want access to system, you must input: \r\n"
-		  "block: Blocked\r\n start: Opened \r\n");
+		  "block: Blocked\r\nstart: Opened \r\n");
   while (1)
   {
-	  lock_command_handler(received);
+	  uint8_t activate = lock_command_handler(received);
+	  while(activate == 1) {
+		  uint8_t key_pressed = keypad_run(&keypad_event);
+		  	if (key_pressed != KEY_PRESSED_NONE) {
+		  	 	lock_sequence_handler(key_pressed);
+		  	 }
+ 	  }
+//	  uint8_t key_pressed = keypad_run(&keypad_event);
+//	  if (key_pressed != KEY_PRESSED_NONE) {
+//	  	lock_sequence_handler(key_pressed);
+//	  }
 
-	  uint8_t key_pressed = keypad_run(&keypad_event);
-	  if (key_pressed != KEY_PRESSED_NONE) {
-		  lock_sequence_handler(key_pressed);
-	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

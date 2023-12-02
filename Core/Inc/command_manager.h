@@ -12,6 +12,6 @@
 #include "ring_buffer.h"
 
 void command_manager_init(void);
-void lock_command_handler(uint8_t *key);
+uint8_t lock_command_handler(uint8_t *key);
 
 #endif /* INC_COMMAND_MANAGER_H_ */
